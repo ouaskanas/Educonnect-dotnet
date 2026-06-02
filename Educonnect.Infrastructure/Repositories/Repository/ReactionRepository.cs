@@ -1,0 +1,20 @@
+﻿using Educonnect.Domain.Entities;
+using Educonnect.Infrastructure.Data;
+using Educonnect.Infrastructure.Repositories.IRepository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Educonnect.Infrastructure.Repositories.Repository
+{
+    public class ReactionRepository : Repository<Reaction>, IReactionRepository
+    {
+        private readonly ApplicationDbContext _context;
+        public ReactionRepository(ApplicationDbContext context) : base(context)
+        {
+            this._context = context;
+        }
+    }
+}
