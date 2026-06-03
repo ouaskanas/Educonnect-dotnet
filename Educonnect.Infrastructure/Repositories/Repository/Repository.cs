@@ -27,6 +27,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         public async Task Delete(Guid id)
         {
             var entity = await this._context.Set<T>().FindAsync(id);
+            if (entity is null) return;
             this._context.Set<T>().Remove(entity);
             await this._context.SaveChangesAsync();
         }
