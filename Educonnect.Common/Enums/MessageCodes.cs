@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Educonnect.Infrastructure.Repositories.IRepository
+namespace Educonnect.Common.Enums
 {
-    public interface IUserRepository
+    public enum MessageCodes
     {
+        EntityNotFound,
     }
 }

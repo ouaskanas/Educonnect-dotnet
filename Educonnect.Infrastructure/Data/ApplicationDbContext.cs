@@ -15,6 +15,7 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<Group> Groups => Set<Group>();
     public DbSet<Reaction> Reactions => Set<Reaction>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +28,7 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
         ConfigureComment(modelBuilder);
         ConfigureGroup(modelBuilder);
         ConfigureReaction(modelBuilder);
+        ConfigureRefreshToken(modelBuilder);
     }
 
     private static void RenameIdentityTables(ModelBuilder m)
@@ -146,6 +148,20 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
             e.HasIndex(r => r.ProfileId);
             e.HasIndex(r => r.PostId);
             e.HasIndex(r => r.CommentId);
+        });
+    }
+
+    private static void ConfigureRefreshToken(ModelBuilder m)
+    {
+        m.Entity<RefreshToken>(e =>
+        {
+            e.HasKey(r => r.Id);
+            e.HasIndex(r => r.Token).IsUnique();
+
+            e.HasOne(r => r.User)
+             .WithMany()
+             .HasForeignKey(r => r.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
