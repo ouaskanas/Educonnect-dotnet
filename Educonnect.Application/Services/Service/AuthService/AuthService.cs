@@ -1,4 +1,5 @@
 using Educonnect.Application.Dtos.AuthDto;
+using Educonnect.Application.Services.IService;
 using Educonnect.Application.Services.IService.IAuthService;
 using Educonnect.Domain.Entities;
 using Educonnect.Domain.Enums;
@@ -15,17 +16,20 @@ public class AuthService : IAuthService
     private readonly ITokenService _tokenService;
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _config;
+    private readonly IProfileService _profileService;
 
     public AuthService(
         UserManager<User> userManager,
         ITokenService tokenService,
         ApplicationDbContext context,
+        IProfileService profileService,
         IConfiguration config)
     {
         _userManager  = userManager;
         _tokenService = tokenService;
         _context      = context;
         _config       = config;
+        _profileService = profileService;
     }
 
     public async Task SignUpAsync(SignUpDto dto)
@@ -41,9 +45,8 @@ public class AuthService : IAuthService
             PhoneNumber = dto.PhoneNumber,
             Role        = Role.User,
             CreateAt    = DateTime.UtcNow,
-            Profile     = new Profile { Username = dto.Username },
         };
-
+        var profile = await _profileService.CreateProfile(user.Id);
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded)

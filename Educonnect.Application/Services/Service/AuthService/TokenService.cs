@@ -23,6 +23,7 @@ public class TokenService : ITokenService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Spn, user.SecurityStamp),
             new Claim(ClaimTypes.Name,           user.UserName ?? string.Empty),
             new Claim(ClaimTypes.Email,          user.Email    ?? string.Empty),
             new Claim(ClaimTypes.GivenName,      user.Name),

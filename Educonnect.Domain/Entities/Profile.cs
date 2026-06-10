@@ -26,5 +26,6 @@ namespace Educonnect.Domain.Entities
         public DateTime? DeletedAt { get; set; }
         public bool IsDeleted { get; set; }
         public Guid? DeletedBy { get; set; }
+
     }
 }
