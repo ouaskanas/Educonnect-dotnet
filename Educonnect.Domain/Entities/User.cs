@@ -9,7 +9,7 @@ public class User : IdentityUser<Guid>, IDeletable
     public Role Role { get; set; } = Role.None;
     public DateTime CreateAt { get; set; }
     public Guid ProdilId { get; set; }
-    public virtual Profile Profile { get; set; } = new Profile();
+    public virtual Profile Profile { get; set; }
 
     public DateTime? DeletedAt { get; set; }
     public bool IsDeleted { get; set; }

@@ -23,6 +23,7 @@ public class TokenService : ITokenService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Spn, user.SecurityStamp.ToString()),
             new Claim(ClaimTypes.Name,           user.UserName ?? string.Empty),
             new Claim(ClaimTypes.Email,          user.Email    ?? string.Empty),
             new Claim(ClaimTypes.GivenName,      user.Name),
@@ -44,6 +45,7 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 
     // Opaque cryptographic token — stored in DB, never decoded
     public string GenerateRefreshToken()

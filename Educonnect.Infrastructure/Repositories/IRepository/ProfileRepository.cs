@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Educonnect.Infrastructure.Repositories.IRepository
 {
-    public class ProfileRepository : Repository<Post>, IProfileRepository
+    public class ProfileRepository :  Repository<Profile>, IProfileRepository
     {
         private readonly ApplicationDbContext _context;
         public ProfileRepository(ApplicationDbContext context) : base(context)
