@@ -1,4 +1,10 @@
+using Educonnect.Application.Services.IService;
+using Educonnect.Application.Services.IService.IAuthService;
+using Educonnect.Application.Services.Service;
+using Educonnect.Application.Services.Service.AuthService;
 using Educonnect.Infrastructure.Data;
+using Educonnect.Infrastructure.Repositories.IRepository;
+using Educonnect.Infrastructure.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +22,10 @@ builder.Services
         options.User.RequireUniqueEmail = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

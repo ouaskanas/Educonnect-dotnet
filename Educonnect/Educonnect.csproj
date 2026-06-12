@@ -17,6 +17,9 @@
 		<ProjectReference Include="..\Educonnect.Infrastructure\Educonnect.Infrastructure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\Educonnect.Application\Educonnect.Application.csproj" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.15" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.15" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">

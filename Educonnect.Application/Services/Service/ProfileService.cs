@@ -25,14 +25,23 @@ namespace Educonnect.Application.Services.Service
         public async Task<ProfileCreationResponse> CreateProfile(Guid userId)
         {
             var user = await this._userManager.FindByIdAsync(userId.ToString()) ?? throw new EntityNotFoundException("Entity Not Found Exception");
-            var profile = new Profile { Username = user.UserName, UserId = userId, User = user };
+            var profile = new Profile { Username = user.UserName ?? $"username{DateTime.UtcNow:yyyyMMddHHmmssfff}" , UserId = userId, User = user };
             await this._profileRepository.Add(profile);
             return new ProfileCreationResponse { Username = profile.Username, Description = profile.Description };
         }
 
-        public Task<SuspendProfileDto> SuspendProfile(Guid profileId)
+        public async Task<SuspendProfileDto> SuspendProfile(Guid profileId, DateTime? until, Guid AdminId)
         {
-            throw new NotImplementedException();
+            var profile = await _profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("Entity Not Found Exception");
+            profile.SuspendUser(until, AdminId); 
+            await _profileRepository.Update(profile);
+            return new SuspendProfileDto
+            {
+                ProfileName = profile.Username, 
+                SuspendedAt = profile.SuspendedAt,
+                SuspendedBy = profile.SuspendedBy,
+                SuspendedUntil = profile.SuspendedUntil,
+            };
         }
 
         public async Task<ProfileCreationResponse> UpdateProfile(Guid profileId, UpdateProfileRequest updateProfileDto)

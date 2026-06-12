@@ -7,6 +7,10 @@ using Educonnect.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Educonnect.Application.Services.Service.AuthService;
 
@@ -46,12 +50,13 @@ public class AuthService : IAuthService
             Role        = Role.User,
             CreateAt    = DateTime.UtcNow,
         };
-        var profile = await _profileService.CreateProfile(user.Id);
         var result = await _userManager.CreateAsync(user, dto.Password);
-
+        
         if (!result.Succeeded)
             throw new InvalidOperationException(
                 string.Join(", ", result.Errors.Select(e => e.Description)));
+
+        var profile = await _profileService.CreateProfile(user.Id);
     }
 
     public async Task<AuthResponseDto> SignInAsync(SignInDto dto)

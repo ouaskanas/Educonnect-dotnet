@@ -11,6 +11,6 @@ namespace Educonnect.Application.Services.IService
     {
         Task<ProfileCreationResponse> CreateProfile(Guid userId);
         Task<ProfileCreationResponse> UpdateProfile(Guid profileId, UpdateProfileRequest updateProfileDto);
-        Task<SuspendProfileDto> SuspendProfile(Guid profileId); 
+        Task<SuspendProfileDto> SuspendProfile(Guid profileId, DateTime? until, Guid AdminId); 
     }
 }
