@@ -1,6 +1,8 @@
-﻿using Educonnect.Domain.Entities;
+﻿using Educonnect.Common.Pagination.Dto;
+using Educonnect.Domain.Entities;
 using Educonnect.Infrastructure.Data;
 using Educonnect.Infrastructure.Repositories.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,39 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         public ReactionRepository(ApplicationDbContext context) : base(context)
         {
             this._context = context;
+        }
+
+        public async Task<PagedResponse<Reaction>> GetReactionsAsync(PaginationParameters pagination)
+        {
+            var query = _context.Reactions
+            .OrderByDescending(p => p.CreatedAt)
+            .AsNoTracking();
+            int totalRecords = await query.CountAsync();
+
+            var data = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+            return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+        }
+
+        public async Task<PagedResponse<Reaction>> GetReactionsByPostAsync(Guid postId, PaginationParameters? pagination)
+        {
+            pagination ??= new PaginationParameters();
+
+            var query = _context.Reactions
+            .Where(c => c.PostId == postId)
+            .OrderByDescending(c => c.CreatedAt)
+            .AsNoTracking();
+
+            int totalRecords = await query.CountAsync();
+
+            var data = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+            return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+
         }
     }
 }

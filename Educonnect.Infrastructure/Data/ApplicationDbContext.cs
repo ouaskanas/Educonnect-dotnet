@@ -135,8 +135,7 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
              .UsingEntity("GroupMembers");
 
             e.HasMany(g => g.Posts)
-             .WithMany(p => p.Groups)
-             .UsingEntity("GroupPosts");
+             .WithOne(p => p.Group);
         });
     }
 
