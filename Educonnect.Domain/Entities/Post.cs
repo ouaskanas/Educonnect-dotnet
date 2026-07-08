@@ -17,10 +17,11 @@ namespace Educonnect.Domain.Entities
         public IEnumerable<Reaction> Reactions { get; set; } = Enumerable.Empty<Reaction>();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; } = null;
+        public Guid? UpdatedBy { get; set; } = null;
         public Profile Author { get; set; } = new Profile();
-        public Guid AuthorId { get; set; } 
-        public virtual Group Group { get; set; }
-        public Guid GroupId { get; set; }
+        public Guid AuthorId { get; set; }
+        public virtual Group? Group { get; set; } = null;
+        public Guid? GroupId { get; set; } = null;
 
         /// <summary>
         /// Deletable Attributes 
@@ -28,5 +29,21 @@ namespace Educonnect.Domain.Entities
         public DateTime? DeletedAt { get; set; }
         public bool IsDeleted { get; set; }
         public Guid? DeletedBy { get; set; }
+
+        public void UpdatePost(string Title, string Body, Guid userId)
+        {
+            this.Title = Title;
+            this.Body = Body;
+            this.UpdatedAt = DateTime.Now;
+            this.UpdatedBy = userId;
+        }
+
+        public void DeletePost(Guid userId)
+        {
+            DeletedAt = DateTime.Now;
+            IsDeleted = true;
+            DeletedBy = userId;
+            // comment & reaction cascade soft delete
+        }
     }
 }

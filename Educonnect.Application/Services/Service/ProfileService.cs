@@ -2,7 +2,7 @@
 using Educonnect.Application.Services.IService;
 using Educonnect.Common.Exceptions;
 using Educonnect.Domain.Entities;
-using Educonnect.Infrastructure.Repositories.Repository;
+using Educonnect.Infrastructure.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -27,6 +27,9 @@ namespace Educonnect.Application.Services.Service
             var user = await this._userManager.FindByIdAsync(userId.ToString()) ?? throw new EntityNotFoundException("Entity Not Found Exception");
             var profile = new Profile { Username = user.UserName ?? $"username{DateTime.UtcNow:yyyyMMddHHmmssfff}" , UserId = userId, User = user };
             await this._profileRepository.Add(profile);
+            user.ProfilId = profile.Id;
+            user.Profile = profile;
+            await this._userManager.UpdateAsync(user);
             return new ProfileCreationResponse { Username = profile.Username, Description = profile.Description };
         }
 
@@ -76,6 +79,17 @@ namespace Educonnect.Application.Services.Service
             }
 
             await this._profileRepository.Update(profile);
+            if (profile.User != null)
+            {
+                var updateResult = await this._userManager.UpdateAsync(profile.User);
+                if (!updateResult.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        string.Join(", ", updateResult.Errors.Select(e => e.Description))
+                    );
+                }
+            }
+
             return new ProfileCreationResponse
             {
                 Username = profile.Username,

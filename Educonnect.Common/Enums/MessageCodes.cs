@@ -9,5 +9,6 @@ namespace Educonnect.Common.Enums
     public enum MessageCodes
     {
         EntityNotFound,
+        Unauthorized,
     }
 }

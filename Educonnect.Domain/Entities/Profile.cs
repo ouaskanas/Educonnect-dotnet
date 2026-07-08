@@ -16,9 +16,9 @@ namespace Educonnect.Domain.Entities
         public int PostCount { get; set; } = 0;
         public User User { get; set; }
         public Guid UserId { get; set; }
-        public virtual IEnumerable<Post> Posts { get; set; } = Enumerable.Empty<Post>();
-        public virtual IEnumerable<Comment> Comments { get; set; } = Enumerable.Empty<Comment>();
-        public virtual IEnumerable<Group> Groups { get; set; } = Enumerable.Empty<Group>();
+        public virtual IEnumerable<Post> Posts { get; set; } = new List<Post>();
+        public virtual IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual IEnumerable<Group> Groups { get; set; } = new List<Group>();
 
         /// <summary>
         /// Deletable Attributes 

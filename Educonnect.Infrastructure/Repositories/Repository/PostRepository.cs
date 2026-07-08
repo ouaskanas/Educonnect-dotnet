@@ -36,7 +36,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
                     Author = p.Author,
                     CommentCount = p.Comments.Count(),
                     ReactionCount = p.Reactions.Count(),
-                    CommunityBoost = userGroupIds.Contains(p.GroupId) ? 100 : 0,
+                    CommunityBoost = (p.GroupId != null && userGroupIds.Contains(p.GroupId.Value)) ? 100 : 0,
                     AgeInHours = EF.Functions.DateDiffHour(p.CreatedAt, now),
                     TopComment = p.Comments
                         .OrderByDescending(c => c.Reactions.Count())
@@ -73,17 +73,16 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         }
 
 
-
-        public Task<List<Post>> GetPostById(Guid id)
+        public Task<Post?> GetPostById(Guid id)
         {
             return this._context.Posts
                 .Include(p=>p.Comments)
-                .ToListAsync();
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<List<Post>> GetPostByName(string name)
         {
-            return await this._context.Posts.Where(p=>p.Title.Contains(name)).ToListAsync();
+            return await this._context.Posts.Where(p=>p.Title.Contains(name) || p.Body.Contains(name)).ToListAsync();
         }
 
         public async Task<PagedResponse<Post>> GetPostsAsync(PaginationParameters pagination)

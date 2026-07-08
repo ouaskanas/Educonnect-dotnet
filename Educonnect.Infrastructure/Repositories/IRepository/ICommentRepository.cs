@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Educonnect.Infrastructure.Repositories.IRepository
 {
-    public interface ICommentRepository
+    public interface ICommentRepository : IRepository<Comment>
     {
         Task<PagedResponse<Comment>> GetCommentsAsync(PaginationParameters pagination);
         Task<PagedResponse<Comment>> GetCommentsByPostAsync(Guid postId, PaginationParameters? pagination);
