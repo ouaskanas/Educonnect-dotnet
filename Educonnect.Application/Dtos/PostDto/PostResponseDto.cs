@@ -18,7 +18,6 @@ namespace Educonnect.Application.Dtos.PostDto
         public int reactionCount { get; set; }
         public int LikeCount { get; set; }
         public int DisLikeCount { get; set; }
-        public IEnumerable<PostReactionDto> Reactions { get; set; } = Enumerable.Empty<PostReactionDto>();
         public DateTime PostDate { get; set; }
         public string AuthorName { get; set; } = string.Empty;
         public Guid AuthorId { get; set; }

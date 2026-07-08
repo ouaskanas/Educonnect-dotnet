@@ -11,7 +11,7 @@ namespace Educonnect.Domain.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public ReactionType ReactionType { get; set; } = ReactionType.None;
-        public virtual Profile Profile { get; set; } = new Profile();
+        public virtual Profile Profile { get; set; }
         public Guid ProfileId { get; set; }
         public virtual Post? Post { get; set; }
         public Guid? PostId { get; set; }

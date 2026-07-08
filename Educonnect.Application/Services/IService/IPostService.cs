@@ -17,6 +17,7 @@ namespace Educonnect.Application.Services.IService
         Task<bool> SoftdeletePost(Guid postId, Guid profileId);
         Task<PostCreationResponse> CreatePostForGroup(PostCreationRequest postCreationRequest, Guid profileId, Guid groupId);
         Task<List<PostResponseDto>> GetPostByKey(string key);
+        Task<List<PostResponseDto>> GetUserPosts(PaginationParameters pagination, Guid profileId);
 
     }
 }

@@ -12,5 +12,6 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
     {
         Task<PagedResponse<Comment>> GetCommentsAsync(PaginationParameters pagination);
         Task<PagedResponse<Comment>> GetCommentsByPostAsync(Guid postId, PaginationParameters? pagination);
+        Task<PagedResponse<Comment>> GetCommentResponses(Guid commentId, Guid postId, PaginationParameters? pagination); 
     }
 }

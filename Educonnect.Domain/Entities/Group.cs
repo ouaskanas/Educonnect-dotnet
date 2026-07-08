@@ -12,13 +12,12 @@ namespace Educonnect.Domain.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        // uniq
         public string GroupId { get; set; } = string.Empty;
-        public virtual IEnumerable<Profile> Memebres { get; set; } = Enumerable.Empty<Profile>();
+        public virtual IEnumerable<Profile> Memebres { get; set; } = new List<Profile>();
         public virtual Profile Admin { get; set; } = new Profile();
         public Guid AdminId { get; set; }
-        public virtual IEnumerable<Post> Posts { get; set; } = Enumerable.Empty<Post>(); 
-        public Guid PostId { get; set; }
+        public virtual IEnumerable<Post> Posts { get; set; } = new List<Post>();
+        public List<Guid> PostId { get; set; } = new List<Guid>();
 
         /// <summary>
         /// Deletable Attributes 

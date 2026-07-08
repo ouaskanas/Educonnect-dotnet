@@ -48,5 +48,20 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             .ToListAsync();
             return new PagedResponse<Comment>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
         }
+
+        public async Task<PagedResponse<Comment>> GetCommentResponses(Guid commentId, Guid postId, PaginationParameters? pagination)
+        {
+            var query = _context.Comments
+                .Where(c => c.Id == commentId && c.PostId == postId)
+                .OrderByDescending(p => p.CreatedAt)
+                .AsNoTracking();
+            int totalRecords = await query.CountAsync();
+
+            var data = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+            return new PagedResponse<Comment>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+        }
     }
 }

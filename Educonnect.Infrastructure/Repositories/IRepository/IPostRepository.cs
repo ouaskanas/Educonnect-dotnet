@@ -12,8 +12,9 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
     {
         Task<List<Post>> GetPostByName(string name);
         Task<Post?> GetPostById(Guid id);
+        Task<bool> ExistById(Guid id);
         Task<PagedResponse<Post>> GetPostsAsync(PaginationParameters pagination);
-
         Task<PagedResponse<Post>> GetFeedAsync(PaginationParameters pagination, Guid userId);
+        Task<PagedResponse<Post>> GetPostsByProfilId(PaginationParameters pagination, Guid profileId);
     }
 }

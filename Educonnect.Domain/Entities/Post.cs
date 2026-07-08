@@ -13,8 +13,8 @@ namespace Educonnect.Domain.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Title { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;
-        public virtual IEnumerable<Comment> Comments { get; set; } = Enumerable.Empty<Comment>();
-        public IEnumerable<Reaction> Reactions { get; set; } = Enumerable.Empty<Reaction>();
+        public virtual IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+        public IEnumerable<Reaction> Reactions { get; set; } = new List<Reaction>();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; } = null;
         public Guid? UpdatedBy { get; set; } = null;
