@@ -1,11 +1,12 @@
+using Educonnect.Application.Services.IService.IAuthService;
+using Educonnect.Domain.Entities;
+using Educonnect.Domain.Enums;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Educonnect.Application.Services.IService.IAuthService;
-using Educonnect.Domain.Entities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Educonnect.Application.Services.Service.AuthService;
 
@@ -20,7 +21,7 @@ public class TokenService : ITokenService
 
     public string GenerateAccessToken(User user)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Spn, user.SecurityStamp.ToString()),
@@ -29,6 +30,11 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.GivenName,      user.Name),
             new Claim(ClaimTypes.Role,           user.Role.ToString()),
         };
+
+        if (user.Role != Role.Admin && user.ProfilId != Guid.Empty)
+        {
+            claims.Add(new Claim("profile_id", user.ProfilId.ToString()));
+        }
 
         var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -1,10 +1,10 @@
-﻿using Educonnect.Infrastructure.Data;
+﻿using Educonnect.Domain.Entities;
+using Educonnect.Infrastructure.Data;
 using Educonnect.Infrastructure.Repositories.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Educonnect.Infrastructure.Repositories.Repository
