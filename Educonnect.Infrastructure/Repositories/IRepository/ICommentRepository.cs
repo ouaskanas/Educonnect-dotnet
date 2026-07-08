@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Educonnect.Common.Pagination.Dto;
+using Educonnect.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,7 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
 {
     public interface ICommentRepository
     {
+        Task<PagedResponse<Comment>> GetCommentsAsync(PaginationParameters pagination);
+        Task<PagedResponse<Comment>> GetCommentsByPostAsync(Guid postId, PaginationParameters? pagination);
     }
 }

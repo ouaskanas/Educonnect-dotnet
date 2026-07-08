@@ -17,6 +17,7 @@ namespace Educonnect.Domain.Entities
         public Guid AuthorId { get; set; }
         public virtual Post Post { get; set; } = new Post();
         public Guid PostId { get; set; }
+        public DateTime CreatedAt { get; set; }
         /// <summary>
         /// Deletable Attributes 
         /// </summary>
