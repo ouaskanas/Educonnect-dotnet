@@ -2,7 +2,7 @@
 using Educonnect.Application.Services.IService;
 using Educonnect.Common.Exceptions;
 using Educonnect.Domain.Entities;
-using Educonnect.Infrastructure.Repositories.Repository;
+using Educonnect.Infrastructure.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

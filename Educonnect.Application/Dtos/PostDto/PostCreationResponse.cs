@@ -12,6 +12,6 @@ namespace Educonnect.Application.Dtos.PostDto
         public string Body { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public Guid ProfileId { get; set; }
-
+        public Guid? GroupId { get; set; }
     }
 }

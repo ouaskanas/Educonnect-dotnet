@@ -73,12 +73,11 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         }
 
 
-
-        public Task<List<Post>> GetPostById(Guid id)
+        public Task<Post?> GetPostById(Guid id)
         {
             return this._context.Posts
                 .Include(p=>p.Comments)
-                .ToListAsync();
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<List<Post>> GetPostByName(string name)

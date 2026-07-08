@@ -6,7 +6,6 @@ using Educonnect.Common.Exceptions;
 using Educonnect.Common.Pagination.Dto;
 using Educonnect.Domain.Entities;
 using Educonnect.Infrastructure.Repositories.IRepository;
-using Educonnect.Infrastructure.Repositories.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -22,6 +21,7 @@ namespace Educonnect.Application.Services.Service
     {
         private readonly IPostRepository _postRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IGroupRepository groupRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IReactionRepository _reactionRepository;
         private readonly IProfileRepository _profileRepository;
@@ -35,9 +35,9 @@ namespace Educonnect.Application.Services.Service
             _profileRepository = profileRepository;
         }
 
-        public async Task<PostCreationResponse> CreatePost(PostCreationRequest postCreationRequest, string Id)
+        public async Task<PostCreationResponse> CreatePost(PostCreationRequest postCreationRequest, string userId)
         {
-            var user = await this._userManager.FindByIdAsync(Id) ?? throw new EntityNotFoundException("User not found");
+            var user = await this._userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found");
             if (user.Profile == null)
             {
                 throw new EntityNotFoundException("Profile not found");
@@ -46,15 +46,43 @@ namespace Educonnect.Application.Services.Service
             {
                 Title = postCreationRequest.Title,
                 Body = postCreationRequest.Body,
-                Author = user.Profile, 
+                Author = user.Profile,
                 AuthorId = user.ProfilId,
-            };
+            }; 
             await _postRepository.Add(post);
             return new PostCreationResponse
             {
                 Body = post.Body,
                 Title = postCreationRequest.Title,
                 CreatedAt = post.CreatedAt,
+            };
+        }
+
+        public async Task<PostCreationResponse> CreatePostForGroup(PostCreationRequest postCreationRequest, string userId, Guid groupId)
+        {
+            var user = await this._userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found");
+            var group = await this.groupRepository.GetById(groupId) ?? throw new EntityNotFoundException("Group not found");
+            if (user.Profile == null)
+            {
+                throw new EntityNotFoundException("Profile not found");
+            }
+            var post = new Post
+            {
+                Title = postCreationRequest.Title,
+                Body = postCreationRequest.Body,
+                Author = user.Profile,
+                AuthorId = user.ProfilId,
+                GroupId = groupId,
+                Group = group
+            };
+
+            await _postRepository.Add(post);
+            return new PostCreationResponse
+            {
+                Body = post.Body,
+                Title = postCreationRequest.Title,
+                CreatedAt = post.CreatedAt,
+                GroupId = groupId
             };
         }
 
@@ -122,6 +150,42 @@ namespace Educonnect.Application.Services.Service
                 Reactions = null,
                 UserId = p.Author.Id
             }).ToList();
+        }
+
+        public async Task<bool> SoftdeletePost(Guid postId, string userId)
+        {
+            var user = await this._userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found");
+            var post = await this._postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post not found");
+            if (user.Profile == null || post.AuthorId != user.ProfilId)
+            {
+                throw new UnauthorizedException("You dont have access to this ressource");
+            }
+
+            post.DeletePost(Guid.Parse(userId)); 
+            await this._postRepository.Update(post);
+            return true;
+        }
+
+        public async Task<UpdatePostResponse> UpdatePost(UpdatePostRequest updatePostRequest, Guid postId, string userId)
+        {
+            var user = await this._userManager.FindByIdAsync(userId) ?? throw new EntityNotFoundException("User not found");
+            var post = await this._postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post not found");
+            if (user.Profile ==  null || post.AuthorId != user.ProfilId)
+            {
+                throw new UnauthorizedException("You dont have access to this ressource");
+            }
+            post.UpdatePost(updatePostRequest.PostTitle, updatePostRequest.PostBody, Guid.Parse(userId));
+            await this._postRepository.Update(post);
+            return new UpdatePostResponse
+            {
+                Id = postId,
+                PostTitle = post.Title,
+                PostBody = post.Body,
+                UpdatedAt = post.UpdatedAt,
+                UpdatedBy = user.Profile.Username,
+                GroupId = post.GroupId ?? null,
+                AuthorId = user.ProfilId,
+            };
         }
     }
 }

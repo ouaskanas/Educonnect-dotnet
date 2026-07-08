@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Educonnect.Infrastructure.Repositories.IRepository
 {
-    public interface IReactionRepository
+    public interface IReactionRepository : IRepository<Reaction>
     {
         Task<PagedResponse<Reaction>> GetReactionsAsync(PaginationParameters pagination);
         Task<PagedResponse<Reaction>> GetReactionsByPostAsync(Guid PostId, PaginationParameters? pagination);
