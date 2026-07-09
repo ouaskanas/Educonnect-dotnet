@@ -18,6 +18,11 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             _context = context;
         }
 
+        public async Task<bool> ExistById(Guid id)
+        {
+            return await _context.Profiles.AnyAsync(p => p.Id == id);
+        }
+
         public async Task<Profile?> GetByUsername(string username)
         {
             return await _context.Profiles.FirstOrDefaultAsync(p => p.Username == username);

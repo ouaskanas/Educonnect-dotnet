@@ -112,14 +112,6 @@ public class PostService : IPostService
                 AuthorId = c.AuthorId,
                 AuthorName = c.Author?.Username ?? "Anonyme"
             }).ToList(),
-            Reactions = post.Reactions.Select(r => new PostReactionDto
-            {
-                ReactionId = r.Id,
-                ReactionType = r.ReactionType,
-                CreatedAt = r.CreatedAt,
-                ProfileId = r.ProfileId,
-                ProfileName = r.Profile.Username,
-            }).ToList(),
             UserId = post.Author.Id
         }).ToList();
     }
@@ -149,17 +141,41 @@ public class PostService : IPostService
                 AuthorId = c.AuthorId,
                 AuthorName = c.Author?.Username ?? "Anonyme"
             }).ToList(),
-            Reactions = reactions.Data.Select(r => new PostReactionDto
-            {
-                ReactionId = r.Id,
-                ReactionType = r.ReactionType,
-                CreatedAt = r.CreatedAt,
-                ProfileId = r.ProfileId,
-                ProfileName = r.Profile.Username,
-            }).ToList(),
             UserId = post.Author.Id
         };
     }
+
+    public async Task<List<PostResponseDto>> GetUserPosts(PaginationParameters pagination, Guid profileId)
+    {
+        var userExist = await this._profileRepository.ExistById(profileId);
+        if (userExist)
+        {
+            throw new EntityNotFoundException("Profile not found");
+        }
+        var posts = await this._postRepository.GetPostsByProfilId(null, profileId);
+        return posts.Data.Select(post => new PostResponseDto
+        {
+            PostId = post.Id,
+            PostTitle = post.Title,
+            PostBody = post.Body,
+            PostDate = post.CreatedAt,
+            AuthorId = post.Author.Id,
+            AuthorName = post.Author.Username,
+            reactionCount = post.Reactions.Count(),
+            LikeCount = post.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Like),
+            DisLikeCount = post.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Dislike),
+            Comments = post.Comments.Select(c => new PostCommentDto
+            {
+                CommentId = c.Id,
+                Content = c.Content,
+                CreatedAt = c.CreatedAt,
+                AuthorId = c.AuthorId,
+                AuthorName = c.Author?.Username ?? "Anonyme"
+            }).ToList(),
+            UserId = post.Author.Id
+        }).ToList();
+    }
+        
 
     public async Task<List<PostResponseDto>> GetPosts(PaginationParameters pagination, Guid profileId)
     {
@@ -185,7 +201,6 @@ public class PostService : IPostService
                 AuthorId = c.AuthorId,
                 AuthorName = c.Author?.Username ?? "Anonyme"
             }).ToList(),
-            Reactions = null,
             UserId = p.Author.Id
         }).ToList();
     }
@@ -194,7 +209,6 @@ public class PostService : IPostService
     {
         var post = await _postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post not found");
 
-        // Simple ownership verification directly inside business logic
         if (post.AuthorId != profileId)
         {
             throw new UnauthorizedException("You dont have access to this ressource");

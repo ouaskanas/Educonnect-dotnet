@@ -19,6 +19,11 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             this._context = context;
         }
 
+        public async Task<bool> ExistById(Guid id)
+        {
+            return await _context.Comments.AnyAsync(c=> c.PostId == id);
+        }
+
         public async Task<PagedResponse<Post>> GetFeedAsync(PaginationParameters pagination, Guid userId)
         {
             var userGroupIds = await _context.Set<Group>()
@@ -96,6 +101,23 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             .Skip((pagination.PageNumber - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
             .ToListAsync();
+            return new PagedResponse<Post>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+        }
+
+        public async Task<PagedResponse<Post>> GetPostsByProfilId(PaginationParameters pagination, Guid profileId)
+        {
+            var query = _context.Posts
+           .Where(p =>p.AuthorId == profileId)
+           .OrderByDescending(p => p.CreatedAt)
+           .Include(p=>p.Comments)
+           .AsNoTracking();
+            int totalRecords = await query.CountAsync();
+
+            var data = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+
             return new PagedResponse<Post>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
         }
     }

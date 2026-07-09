@@ -9,6 +9,7 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
 {
     public interface IProfileRepository : IRepository<Profile>
     {
-       Task<Profile?> GetByUsername(string username);
+        Task<Profile?> GetByUsername(string username);
+        Task<bool> ExistById(Guid id);
     }
 }
