@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Educonnect.Application.Dtos.ReactionDto
 {
-    public class PostReactionDto
+    public class CommentReactionDto
     {
         public Guid ReactionId { get; set; }
-        public Guid PostId { get; set; }
+        public Guid CommentId { get; set; }
         public ReactionType ReactionType { get; set; }
         public Guid ProfileId { get; set; }
         public string ProfileName { get; set; } = string.Empty;

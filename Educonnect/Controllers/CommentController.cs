@@ -23,16 +23,18 @@ namespace Educonnect.Controllers
         }
 
         [HttpGet("getfrompost/{postId:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCommentsFromPost(Guid postId)
         {
-            var response =  await this.commentService.GetCommentFromPost(postId);
+            var response =  await this.commentService.GetCommentFromPost(postId, CurrentProfileId);
             return Ok(response);
         }
 
         [HttpGet("get/{commentId:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetComment(Guid commentId)
         {
-            var response = await this.commentService.GetComment(commentId);
+            var response = await this.commentService.GetComment(commentId, CurrentProfileId);
             return Ok(response);
         }
 

@@ -11,8 +11,8 @@ namespace Educonnect.Application.Services.IService
     public interface ICommentService
     {
         Task<CreateCommentResponse> CreateCommentForPost(Guid profilId, Guid postId, string content);
-        Task<CommentResponse> GetComment(Guid commentId);
-        Task<List<CommentResponse>> GetCommentFromPost(Guid postId);
+        Task<CommentResponse> GetComment(Guid commentId, Guid? profilId);
+        Task<List<CommentResponse>> GetCommentFromPost(Guid postId, Guid? profilId);
         Task<UpdateCommentResponse> UpdateComment(Guid profilId, Guid commentId, string Content);
         Task<bool> SoftDeleteComment(Guid commentId, Guid profilId);
         Task<CommentResponseDto> AnswerToComment(Guid commentId, Guid profilId, string Content);

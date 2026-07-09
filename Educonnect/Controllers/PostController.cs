@@ -36,7 +36,7 @@ namespace Educonnect.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Get(Guid postId)
         {
-            var post = await _postService.GetPost(postId);
+            var post = await _postService.GetPost(postId, CurrentProfileId);
             return Ok(post);
         }
 

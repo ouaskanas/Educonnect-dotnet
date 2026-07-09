@@ -1,4 +1,5 @@
 ﻿using Educonnect.Application.Dtos.ReactionDto;
+using Educonnect.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace Educonnect.Application.Dtos.CommentDto
         public int DisLikeCount { get; set; }
         public Guid AuthorId { get; set; }
         public Guid CommentId { get; set; }
+        public ReactionType MyReaction {  get; set; }
     }
 }
