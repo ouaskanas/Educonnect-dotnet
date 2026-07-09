@@ -21,7 +21,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
 
         public async Task<bool> ExistById(Guid id)
         {
-            return await _context.Comments.AnyAsync(c=> c.Id == id);
+            return await _context.Comments.AnyAsync(c=> c.PostId == id);
         }
 
         public async Task<PagedResponse<Post>> GetFeedAsync(PaginationParameters pagination, Guid userId)

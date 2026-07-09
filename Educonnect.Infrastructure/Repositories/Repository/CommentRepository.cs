@@ -19,11 +19,20 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             this._context = context;
         }
 
+        override
+        public async Task<Comment?> GetById(Guid id)
+        {
+            return await this._context.Comments
+                .Include(c=>c.Author)
+                .FirstOrDefaultAsync(c => c.Id == id && c.FatherCommentId == null);
+        }
+
         public async Task<PagedResponse<Comment>> GetCommentsByPostAsync(Guid postId, PaginationParameters? pagination)
         {
             pagination ??= new PaginationParameters();
             var query = _context.Comments
-            .Where(c => c.PostId == postId)
+           .Include(c => c.Author)
+           .Where(c => c.PostId == postId && c.FatherCommentId == null)
            .OrderByDescending(p => p.CreatedAt)
            .AsNoTracking();
             int totalRecords = await query.CountAsync();
@@ -37,6 +46,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
 
         public async Task<PagedResponse<Comment>> GetCommentsAsync(PaginationParameters pagination)
         {
+            pagination ??= new PaginationParameters();
             var query = _context.Comments
             .OrderByDescending(p => p.CreatedAt)
             .AsNoTracking();
@@ -51,8 +61,10 @@ namespace Educonnect.Infrastructure.Repositories.Repository
 
         public async Task<PagedResponse<Comment>> GetCommentResponses(Guid commentId, Guid postId, PaginationParameters? pagination)
         {
+            pagination ??= new PaginationParameters();
             var query = _context.Comments
-                .Where(c => c.Id == commentId && c.PostId == postId)
+                .Where(c => c.FatherCommentId == commentId && c.PostId == postId)
+                .Include(c=>c.Author)
                 .OrderByDescending(p => p.CreatedAt)
                 .AsNoTracking();
             int totalRecords = await query.CountAsync();

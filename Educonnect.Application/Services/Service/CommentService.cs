@@ -31,8 +31,9 @@ namespace Educonnect.Application.Services.Service
                 PostId = postId,
                 Post = post,
                 CreatedAt = DateTime.UtcNow,
+                FatherCommentId = null,
             }; 
-            await this._commentRepository.Update(comment);
+            await this._commentRepository.Add(comment);
             return new CreateCommentResponse
             {
                 Id = comment.Id,

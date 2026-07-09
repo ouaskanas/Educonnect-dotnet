@@ -17,14 +17,14 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             this._context = context;
         }
 
-        public async Task<T> Add(T entity)
+        public virtual async  Task<T> Add(T entity)
         {
             await this._context.Set<T>().AddAsync(entity);
             await this._context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task Delete(Guid id)
+        public virtual async Task Delete(Guid id)
         {
             var entity = await this._context.Set<T>().FindAsync(id);
             if (entity is null) return;
@@ -32,17 +32,17 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             await this._context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
             return await this._context.Set<T>().ToListAsync();
         }
 
-        public async Task<T?> GetById(Guid id)
+        public virtual async Task<T?> GetById(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task Update(T entity)
+        public virtual async Task Update(T entity)
         {
             var entry = this._context.Entry(entity);
             entry.State = EntityState.Modified;

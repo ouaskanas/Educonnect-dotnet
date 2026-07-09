@@ -18,7 +18,7 @@ namespace Educonnect.Domain.Entities
         public Guid AuthorId { get; set; }
         public virtual Post? Post { get; set; }
         public Guid PostId { get; set; }
-        public Guid FatherCommentId { get; set; }
+        public Guid? FatherCommentId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt {  get; set; }
         public Guid? UpdateBy {  get; set; }
