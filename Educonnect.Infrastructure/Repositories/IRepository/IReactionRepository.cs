@@ -13,5 +13,7 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
         Task<PagedResponse<Reaction>> GetReactionsAsync(PaginationParameters pagination);
         Task<PagedResponse<Reaction>> GetReactionsByPostAsync(Guid PostId, PaginationParameters? pagination, Guid? profileId);
         Task<PagedResponse<Reaction>> GetReactionsByCommentAsync(Guid postId, PaginationParameters? pagination, Guid? profileId);
+        Task<Reaction?> GetReactionByPostAndProfileAsync(Guid postId, Guid profileId);
+        Task<Reaction?> GetReactionByCommentAndProfileAsync(Guid commentId, Guid profileId);
     }
 }

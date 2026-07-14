@@ -195,17 +195,19 @@ public class PostService : IPostService
             PostBody = p.Body,
             PostDate = p.CreatedAt,
             AuthorId = p.Author.Id,
-            AuthorName = p.Author.Username,
+            AuthorName = p.Author.Username, 
             reactionCount = p.Reactions.Count(),
             LikeCount = p.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Like),
             DisLikeCount = p.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Dislike),
+            MyReaction = p.HasReacted(profileId ?? Guid.Empty),
             Comments = p.Comments.Select(c => new PostCommentDto
             {
                 CommentId = c.Id,
                 Content = c.Content,
                 CreatedAt = c.CreatedAt,
                 AuthorId = c.AuthorId,
-                AuthorName = c.Author?.Username ?? "Anonyme"
+                AuthorName = c.Author?.Username ?? "Anonyme",
+                MyReaction = p.HasReacted(profileId ?? Guid.Empty)
             }).ToList(),
             UserId = p.Author.Id
         }).ToList();

@@ -68,7 +68,18 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             .Take(pagination.PageSize)
             .ToListAsync();
             return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+        }
 
+        public async Task<Reaction?> GetReactionByPostAndProfileAsync(Guid postId, Guid profileId)
+        {
+            return await _context.Reactions
+                .FirstOrDefaultAsync(r => r.PostId == postId && r.ProfileId == profileId);
+        }
+
+        public async Task<Reaction?> GetReactionByCommentAndProfileAsync(Guid commentId, Guid profileId)
+        {
+            return await _context.Reactions
+                .FirstOrDefaultAsync(r => r.CommentId == commentId && r.ProfileId == profileId);
         }
     }
 }

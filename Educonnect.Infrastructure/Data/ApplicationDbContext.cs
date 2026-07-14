@@ -2,6 +2,7 @@ using Educonnect.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace Educonnect.Infrastructure.Data;
 
@@ -148,6 +149,15 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
             e.HasIndex(r => r.PostId);
             e.HasIndex(r => r.CommentId);
         });
+        m.Entity<Reaction>()
+            .HasIndex(r => new { r.ProfileId, r.PostId })
+            .IsUnique()
+            .HasFilter("[PostId] IS NOT NULL");
+
+        m.Entity<Reaction>()
+            .HasIndex(r => new { r.ProfileId, r.CommentId })
+            .IsUnique()
+            .HasFilter("[CommentId] IS NOT NULL");
     }
 
     private static void ConfigureRefreshToken(ModelBuilder m)

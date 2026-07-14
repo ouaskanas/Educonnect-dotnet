@@ -19,6 +19,13 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             this._context = context;
         }
 
+        public override async Task<Post?> GetById(Guid id)
+        {
+            return await this._context.Posts
+                .Include(p=>p.Reactions)
+                .FirstOrDefaultAsync(p=>p.Id == id);
+        }
+
         public async Task<bool> ExistById(Guid id)
         {
             return await _context.Comments.AnyAsync(c=> c.PostId == id);
@@ -35,7 +42,9 @@ namespace Educonnect.Infrastructure.Repositories.Repository
 
             var now = DateTime.UtcNow;
 
-            var query = _context.Set<Post>()
+            var query = _context.Set<Post>().Include(p=>p.Reactions)
+                .Include(p=>p.Comments)
+                .ThenInclude(m=>m.Reactions)
             .Where(p => !p.IsDeleted)
             .Select(p => new
             {

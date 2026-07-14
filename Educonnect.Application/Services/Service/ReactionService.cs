@@ -3,6 +3,7 @@ using Educonnect.Application.Services.IService;
 using Educonnect.Common.Exceptions;
 using Educonnect.Common.Pagination.Dto;
 using Educonnect.Domain.Entities;
+using Educonnect.Domain.Enums;
 using Educonnect.Infrastructure.Repositories.IRepository;
 using Educonnect.Infrastructure.Repositories.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -33,12 +34,26 @@ namespace Educonnect.Application.Services.Service
         {
             var profile = await profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("Profile Not Found");
             var comment = await commentRepository.GetById(commentId) ?? throw new EntityNotFoundException("Comment Not Found");
-            if (comment.HasDisLiked(profileId))
+
+            var existing = await reactionRepository.GetReactionByCommentAndProfileAsync(commentId, profileId);
+            Reaction reaction;
+
+            if (existing != null)
             {
-                throw new Exception("Comment Already DisLiked");
+                if (existing.ReactionType == ReactionType.Dislike)
+                    throw new Exception("Comment Already DisLiked");
+
+                existing.ReactionType = ReactionType.Dislike;
+                existing.CreatedAt = DateTime.Now;
+                await reactionRepository.Update(existing);
+                reaction = existing;
             }
-            var reaction = comment.DislikeComment(profile);
-            await reactionRepository.Add(reaction);
+            else
+            {
+                reaction = comment.DislikeComment(profile);
+                await reactionRepository.Add(reaction);
+            }
+
             return new CommentReactionDto
             {
                 ReactionId = reaction.Id,
@@ -54,12 +69,25 @@ namespace Educonnect.Application.Services.Service
         {
             var profile = await profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("Profile Not Found");
             var post = await postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post Not Found");
-            if (post.HasDisLiked(profileId))
+
+            var existing = await reactionRepository.GetReactionByPostAndProfileAsync(postId, profileId);
+            Reaction reaction;
+            if (existing != null)
             {
-                throw new Exception("Post Already DisLiked");
+                if (existing.ReactionType == ReactionType.Dislike)
+                    throw new Exception("Post Already DisLiked");
+
+                existing.ReactionType = ReactionType.Dislike;
+                existing.CreatedAt = DateTime.Now;
+                await reactionRepository.Update(existing);
+                reaction = existing;
             }
-            var reaction = post.DisLikePost(profile);
-            await reactionRepository.Add(reaction);
+            else
+            {
+                reaction = post.DisLikePost(profile);
+                await reactionRepository.Add(reaction);
+            }
+
             return new PostReactionDto
             {
                 ReactionId = reaction.Id,
@@ -105,12 +133,26 @@ namespace Educonnect.Application.Services.Service
         {
             var profile = await profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("Profile Not Found");
             var comment = await commentRepository.GetById(commentId) ?? throw new EntityNotFoundException("Comment Not Found");
-            if (comment.HasLiked(profileId))
+
+            var existing = await reactionRepository.GetReactionByCommentAndProfileAsync(commentId, profileId);
+            Reaction reaction;
+
+            if (existing != null)
             {
-                throw new Exception("Comment Already Liked");
+                if (existing.ReactionType == ReactionType.Like)
+                    throw new Exception("Comment Already Liked");
+
+                existing.ReactionType = ReactionType.Like;
+                existing.CreatedAt = DateTime.Now;
+                await reactionRepository.Update(existing);
+                reaction = existing;
             }
-            var reaction = comment.LikeComment(profile);
-            await reactionRepository.Add(reaction);
+            else
+            {
+                reaction = comment.LikeComment(profile);
+                await reactionRepository.Add(reaction);
+            }
+
             return new CommentReactionDto
             {
                 ReactionId = reaction.Id,
@@ -126,12 +168,25 @@ namespace Educonnect.Application.Services.Service
         {
             var profile = await profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("Profile Not Found");
             var post = await postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post Not Found");
-            if (post.HasLiked(profileId))
+
+            var existing = await reactionRepository.GetReactionByPostAndProfileAsync(postId, profileId);
+            Reaction reaction;
+            if (existing != null)
             {
-                throw new Exception("Post Already Liked");
+                if (existing.ReactionType == ReactionType.Like)
+                    throw new Exception("Post Already Liked");
+
+                existing.ReactionType = ReactionType.Like;
+                existing.UpdatedAt = DateTime.Now;
+                await reactionRepository.Update(existing);
+                reaction = existing;
             }
-            var reaction = post.LikePost(profile);
-            await reactionRepository.Add(reaction);
+            else
+            {
+                reaction = post.LikePost(profile);
+                await reactionRepository.Add(reaction);
+            }
+
             return new PostReactionDto
             {
                 ReactionId = reaction.Id,
