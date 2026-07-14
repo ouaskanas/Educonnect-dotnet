@@ -1,6 +1,7 @@
 ﻿using Educonnect.Application.Dtos.CommentDto;
 using Educonnect.Application.Dtos.ReactionDto;
 using Educonnect.Domain.Entities;
+using Educonnect.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace Educonnect.Application.Dtos.PostDto
         public string AuthorName { get; set; } = string.Empty;
         public Guid AuthorId { get; set; }
         public Guid UserId { get; set; }
+        public ReactionType MyReaction {  get; set; }
 
     }
 }

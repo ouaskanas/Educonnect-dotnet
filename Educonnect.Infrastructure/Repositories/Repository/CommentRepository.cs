@@ -24,6 +24,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         {
             return await this._context.Comments
                 .Include(c=>c.Author)
+                .Include(c=>c.Reactions)
                 .FirstOrDefaultAsync(c => c.Id == id && c.FatherCommentId == null);
         }
 

@@ -33,12 +33,12 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
         }
 
-        public async Task<PagedResponse<Reaction>> GetReactionsByPostAsync(Guid postId, PaginationParameters? pagination)
+        public async Task<PagedResponse<Reaction>> GetReactionsByPostAsync(Guid postId, PaginationParameters? pagination, Guid? profileId)
         {
             pagination ??= new PaginationParameters();
 
             var query = _context.Reactions
-            .Where(c => c.PostId == postId)
+            .Where(c => c.PostId == postId && c.ProfileId != profileId.Value)
             .OrderByDescending(c => c.CreatedAt)
             .AsNoTracking();
 
@@ -50,6 +50,36 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             .ToListAsync();
             return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
 
+        }
+
+        public async Task<PagedResponse<Reaction>> GetReactionsByCommentAsync(Guid commentId, PaginationParameters? pagination, Guid? profileId)
+        {
+            pagination ??= new PaginationParameters();
+
+            var query = _context.Reactions
+            .Where(c => c.CommentId == commentId && c.ProfileId != profileId.Value)
+            .OrderByDescending(c => c.CreatedAt)
+            .AsNoTracking();
+
+            int totalRecords = await query.CountAsync();
+
+            var data = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+            return new PagedResponse<Reaction>(data, pagination.PageNumber, pagination.PageSize, totalRecords);
+        }
+
+        public async Task<Reaction?> GetReactionByPostAndProfileAsync(Guid postId, Guid profileId)
+        {
+            return await _context.Reactions
+                .FirstOrDefaultAsync(r => r.PostId == postId && r.ProfileId == profileId);
+        }
+
+        public async Task<Reaction?> GetReactionByCommentAndProfileAsync(Guid commentId, Guid profileId)
+        {
+            return await _context.Reactions
+                .FirstOrDefaultAsync(r => r.CommentId == commentId && r.ProfileId == profileId);
         }
     }
 }

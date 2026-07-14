@@ -11,8 +11,8 @@ namespace Educonnect.Application.Services.IService
     public interface IPostService
     {
         Task<PostCreationResponse> CreatePost(PostCreationRequest postCreationRequest, Guid profileId);
-        Task<PostResponseDto> GetPost(Guid postId);
-        Task<List<PostResponseDto>> GetPosts(PaginationParameters pagination, Guid profileId);
+        Task<PostResponseDto> GetPost(Guid postId, Guid? profilId);
+        Task<List<PostResponseDto>> GetPosts(PaginationParameters pagination, Guid? profileId);
         Task<UpdatePostResponse> UpdatePost(UpdatePostRequest updatePostRequest, Guid postId, Guid profileId);
         Task<bool> SoftdeletePost(Guid postId, Guid profileId);
         Task<PostCreationResponse> CreatePostForGroup(PostCreationRequest postCreationRequest, Guid profileId, Guid groupId);

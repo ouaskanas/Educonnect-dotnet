@@ -43,7 +43,7 @@ namespace Educonnect.Application.Services.Service
             };
         }
 
-        public async Task<CommentResponse> GetComment(Guid commentId)
+        public async Task<CommentResponse> GetComment(Guid commentId, Guid? profileId)
         {
             var comment = await _commentRepository.GetById(commentId)
                 ?? throw new EntityNotFoundException("Comment not found");
@@ -58,6 +58,7 @@ namespace Educonnect.Application.Services.Service
                 AuthorId = r.AuthorId,
                 LikeCount = r.Reactions?.Count(x => x.ReactionType == Domain.Enums.ReactionType.Like) ?? 0,
                 DisLikeCount = r.Reactions?.Count(x => x.ReactionType == Domain.Enums.ReactionType.Dislike) ?? 0,
+                MyReaction = r.HasReacted(profileId ?? Guid.Empty)
             }).ToList() ?? new List<CommentResponseDto>();
 
             return new CommentResponse
@@ -69,11 +70,12 @@ namespace Educonnect.Application.Services.Service
                 AuthorId = comment.AuthorId,
                 AuthorName = comment.Author?.Username ?? "Unknown",
                 PostId = comment.PostId,
-                CommentResponses = repliesDto
+                CommentResponses = repliesDto,
+                MyReaction = comment.HasReacted(profileId ?? Guid.Empty)
             };
         }
 
-        public async Task<List<CommentResponse>> GetCommentFromPost(Guid postId)
+        public async Task<List<CommentResponse>> GetCommentFromPost(Guid postId, Guid? profileId)
         {
             var postExists = await _postRepository.ExistById(postId);
             if (!postExists)
@@ -98,6 +100,7 @@ namespace Educonnect.Application.Services.Service
                     AuthorId = r.AuthorId,
                     LikeCount = r.Reactions?.Count(x => x.ReactionType == Domain.Enums.ReactionType.Like) ?? 0,
                     DisLikeCount = r.Reactions?.Count(x => x.ReactionType == Domain.Enums.ReactionType.Dislike) ?? 0,
+                    MyReaction = r.HasReacted(profileId ?? Guid.Empty)
                 }).ToList() ?? new List<CommentResponseDto>();
 
                 commentResponses.Add(new CommentResponse
@@ -109,7 +112,8 @@ namespace Educonnect.Application.Services.Service
                     AuthorId = c.AuthorId,
                     AuthorName = c.Author?.Username ?? "Unknown",
                     PostId = c.PostId,
-                    CommentResponses = repliesDto
+                    CommentResponses = repliesDto,
+                    MyReaction = c.HasReacted(profileId ?? Guid.Empty)
                 });
             }
 

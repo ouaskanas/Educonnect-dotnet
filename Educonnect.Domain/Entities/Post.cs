@@ -45,5 +45,63 @@ namespace Educonnect.Domain.Entities
             DeletedBy = userId;
             // comment & reaction cascade soft delete
         }
+
+        public ReactionType HasReacted(Guid profileId)
+        {
+            return this.Reactions
+                .FirstOrDefault(r=> r.ProfileId == profileId)?
+                .ReactionType ?? ReactionType.None;
+        }
+
+        public Reaction LikePost(Profile profile)
+        {
+            var reaction = new Reaction
+            {
+                ReactionType = ReactionType.Like,
+                Profile = profile,
+                ProfileId = profile.Id,
+                Post = this,
+                PostId = this.Id,
+                Comment = null,
+                CommentId = null,
+                CreatedAt = DateTime.Now,
+            };
+            if (this.Reactions is List<Reaction> localList)
+            {
+                localList.Add(reaction);
+            }
+
+            return reaction;
+        }
+        public Reaction DisLikePost(Profile profile)
+        {
+            var reaction = new Reaction
+            {
+                ReactionType = ReactionType.Dislike,
+                Profile = profile,
+                ProfileId = profile.Id,
+                Post = this,
+                PostId = this.Id,
+                Comment = null,
+                CommentId = null,
+                CreatedAt = DateTime.Now,
+            };
+            if (this.Reactions is List<Reaction> localList)
+            {
+                localList.Add(reaction);
+            }
+
+            return reaction;
+        }
+        // todo : fix the filter
+        public bool HasLiked(Guid profileId)
+        {
+            return this.Reactions.Any(r => r.ProfileId == profileId && r.ReactionType == ReactionType.Like);
+        }
+
+        public bool HasDisLiked(Guid profileId)
+        {
+            return this.Reactions.Any(r => r.ProfileId == profileId && r.ReactionType == ReactionType.Dislike);
+        }
     }
 }
