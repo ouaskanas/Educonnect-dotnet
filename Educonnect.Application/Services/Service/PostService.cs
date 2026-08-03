@@ -116,11 +116,10 @@ public class PostService : IPostService
         }).ToList();
     }
 
-    public async Task<PostResponseDto> GetPost(Guid postId)
+    public async Task<PostResponseDto> GetPost(Guid postId, Guid? profileId)
     {
         var post = await _postRepository.GetById(postId) ?? throw new EntityNotFoundException("Post Not found");
         var comments = await _commentRepository.GetCommentsByPostAsync(postId, null);
-        var reactions = await _reactionRepository.GetReactionsByPostAsync(postId, null);
 
         return new PostResponseDto
         {
@@ -139,8 +138,10 @@ public class PostService : IPostService
                 Content = c.Content,
                 CreatedAt = c.CreatedAt,
                 AuthorId = c.AuthorId,
-                AuthorName = c.Author?.Username ?? "Anonyme"
+                AuthorName = c.Author?.Username ?? "Anonyme", 
+                MyReaction = c.HasReacted(profileId ?? Guid.Empty)
             }).ToList(),
+            MyReaction = post.HasReacted(profileId ?? Guid.Empty),
             UserId = post.Author.Id
         };
     }
@@ -177,10 +178,15 @@ public class PostService : IPostService
     }
         
 
-    public async Task<List<PostResponseDto>> GetPosts(PaginationParameters pagination, Guid profileId)
+    public async Task<List<PostResponseDto>> GetPosts(PaginationParameters pagination, Guid? profileId)
     {
-        _ = await _profileRepository.GetById(profileId) ?? throw new EntityNotFoundException("User Not Found");
-        var posts = await _postRepository.GetFeedAsync(pagination, profileId);
+        if (profileId.HasValue && profileId.Value != Guid.Empty)
+        {
+            _ = await _profileRepository.GetById(profileId.Value)
+                ?? throw new EntityNotFoundException("User Not Found");
+        }
+
+        var posts = await _postRepository.GetFeedAsync(pagination, profileId ?? Guid.Empty);
 
         return posts.Data.Select(p => new PostResponseDto
         {
@@ -189,17 +195,19 @@ public class PostService : IPostService
             PostBody = p.Body,
             PostDate = p.CreatedAt,
             AuthorId = p.Author.Id,
-            AuthorName = p.Author.Username,
+            AuthorName = p.Author.Username, 
             reactionCount = p.Reactions.Count(),
             LikeCount = p.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Like),
             DisLikeCount = p.Reactions.Count(r => r.ReactionType == Domain.Enums.ReactionType.Dislike),
+            MyReaction = p.HasReacted(profileId ?? Guid.Empty),
             Comments = p.Comments.Select(c => new PostCommentDto
             {
                 CommentId = c.Id,
                 Content = c.Content,
                 CreatedAt = c.CreatedAt,
                 AuthorId = c.AuthorId,
-                AuthorName = c.Author?.Username ?? "Anonyme"
+                AuthorName = c.Author?.Username ?? "Anonyme",
+                MyReaction = p.HasReacted(profileId ?? Guid.Empty)
             }).ToList(),
             UserId = p.Author.Id
         }).ToList();

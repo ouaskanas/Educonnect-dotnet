@@ -19,48 +19,58 @@ namespace Educonnect.Infrastructure.Repositories.Repository
             this._context = context;
         }
 
+        public override async Task<Post?> GetById(Guid id)
+        {
+            return await this._context.Posts
+                .Include(p=>p.Reactions)
+                .FirstOrDefaultAsync(p=>p.Id == id);
+        }
+
         public async Task<bool> ExistById(Guid id)
         {
             return await _context.Comments.AnyAsync(c=> c.PostId == id);
         }
 
-        public async Task<PagedResponse<Post>> GetFeedAsync(PaginationParameters pagination, Guid userId)
+        public async Task<PagedResponse<Post>> GetFeedAsync(PaginationParameters pagination, Guid? profileId)
         {
-            var userGroupIds = await _context.Set<Group>()
-                .Where(g => g.Memebres.Any(m => m.Id == userId) && !g.IsDeleted)
+            var userGroupIds = (profileId.HasValue && profileId.Value != Guid.Empty)
+            ? await _context.Set<Group>()
+                .Where(g => g.Memebres.Any(m => m.Id == profileId.Value) && !g.IsDeleted)
                 .Select(g => g.Id)
-                .ToListAsync();
+                .ToListAsync()
+            : new List<Guid>();
 
             var now = DateTime.UtcNow;
 
-            var query = _context.Set<Post>()
-                .Where(p => !p.IsDeleted)
-                .Select(p => new
-                {
-                    Post = p,
-                    Author = p.Author,
-                    CommentCount = p.Comments.Count(),
-                    ReactionCount = p.Reactions.Count(),
-                    CommunityBoost = (p.GroupId != null && userGroupIds.Contains(p.GroupId.Value)) ? 100 : 0,
-                    AgeInHours = EF.Functions.DateDiffHour(p.CreatedAt, now),
-                    TopComment = p.Comments
-                        .OrderByDescending(c => c.Reactions.Count())
-                        .FirstOrDefault()
-                });
+            var query = _context.Set<Post>().Include(p=>p.Reactions)
+                .Include(p=>p.Comments)
+                .ThenInclude(m=>m.Reactions)
+            .Where(p => !p.IsDeleted)
+            .Select(p => new
+            {
+                Post = p,
+                Author = p.Author,
+                CommentCount = p.Comments.Count(),
+                ReactionCount = p.Reactions.Count(),
+                CommunityBoost = (p.GroupId != null && userGroupIds.Contains(p.GroupId.Value)) ? 100 : 0,
+                AgeInHours = EF.Functions.DateDiffHour(p.CreatedAt, now),
+                TopComment = p.Comments
+                    .OrderByDescending(c => c.Reactions.Count())
+                    .FirstOrDefault()
+            });
 
             var pagedResults = await query
-                .Select(x => new
-                {
-                    x.Post,
-                    x.Author,
-                    x.TopComment,
-                    Score = (double)(x.ReactionCount * 2 + x.CommentCount * 5 + x.CommunityBoost)
-                            / Math.Pow((x.AgeInHours + 2), 1.5)
-                })
-                .OrderByDescending(x => x.Score)
-                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
-                .Take(pagination.PageSize)
-                .ToListAsync();
+            .Select(x => new
+            {
+                x.Post,
+                x.Author,
+                x.TopComment,
+                Score = (double)(x.ReactionCount * 2 + x.CommentCount * 5 + x.CommunityBoost) / Math.Pow((double)(x.AgeInHours + 2), 1.5)
+            })
+            .OrderByDescending(x => x.Score)
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
 
             var posts = pagedResults.Select(x =>
             {

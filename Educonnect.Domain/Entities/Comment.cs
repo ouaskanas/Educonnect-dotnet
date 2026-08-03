@@ -42,5 +42,65 @@ namespace Educonnect.Domain.Entities
             IsDeleted = true; 
             DeletedBy = userId;
         }
+
+        public Reaction LikeComment(Profile profile)
+        {
+            var reaction = new Reaction
+            {
+                ReactionType = ReactionType.Like,
+                Profile = profile,
+                ProfileId = profile.Id,
+                Post = null,
+                PostId = null,
+                Comment = this,
+                CommentId = this.Id,
+                CreatedAt = DateTime.Now,
+            };
+            if (this.Reactions is List<Reaction> localList)
+            {
+                localList.Add(reaction);
+            }
+
+            return reaction;
+        }
+
+        public Reaction DislikeComment(Profile profile)
+        {
+            var reaction = new Reaction
+            {
+                ReactionType = ReactionType.Dislike,
+                Profile = profile,
+                ProfileId = profile.Id,
+                Post = null,
+                PostId = null,
+                Comment = this,
+                CommentId = this.Id,
+                CreatedAt = DateTime.Now,
+            };
+            if (this.Reactions is List<Reaction> localList)
+            {
+                localList.Add(reaction);
+            }
+            return reaction;
+        }
+
+        public ReactionType HasReacted(Guid profileId)
+        {
+            return this.Reactions
+                .FirstOrDefault(r => r.ProfileId == profileId)?
+                .ReactionType ?? ReactionType.None;
+        }
+
+        public bool HasLiked(Guid profileId)
+        {
+            return this.Reactions.Any(r =>r.ProfileId == profileId 
+            && r.ReactionType == ReactionType.Like);
+        }
+
+        public bool HasDisLiked(Guid profileId)
+        {
+            return this.Reactions.Any(r =>r.ProfileId == profileId 
+            && r.ReactionType == ReactionType.Dislike);
+        }
     }
 }

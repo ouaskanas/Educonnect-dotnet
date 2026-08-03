@@ -63,6 +63,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IReactionService, ReactionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
