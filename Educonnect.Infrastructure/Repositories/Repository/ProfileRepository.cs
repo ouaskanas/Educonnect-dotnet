@@ -27,5 +27,15 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         {
             return await _context.Profiles.FirstOrDefaultAsync(p => p.Username == username);
         }
+
+        public async Task<List<Profile>> GetRange(List<Guid> profileIds)
+        {
+            if (profileIds == null || !profileIds.Any())
+                return new List<Profile>();
+
+            return await _context.Profiles
+                .Where(p => profileIds.Contains(p.Id))
+                .ToListAsync();
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace Educonnect.Infrastructure.Repositories.Repository
         {
             var userGroupIds = (profileId.HasValue && profileId.Value != Guid.Empty)
             ? await _context.Set<Group>()
-                .Where(g => g.Memebres.Any(m => m.Id == profileId.Value) && !g.IsDeleted)
+                .Where(g => g.Membres.Any(m => m.Id == profileId.Value) && !g.IsDeleted)
                 .Select(g => g.Id)
                 .ToListAsync()
             : new List<Guid>();

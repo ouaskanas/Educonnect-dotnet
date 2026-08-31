@@ -1,4 +1,5 @@
-﻿using Educonnect.Domain.Entities;
+﻿using Educonnect.Common.Pagination.Dto;
+using Educonnect.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
 {
     public interface IGroupRepository : IRepository<Group>
     {
+        Task<PagedResponse<Group>> GetGroupsAsync(PaginationParameters pagination);
     }
 }

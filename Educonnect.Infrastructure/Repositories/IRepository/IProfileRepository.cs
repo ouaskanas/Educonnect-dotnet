@@ -11,5 +11,6 @@ namespace Educonnect.Infrastructure.Repositories.IRepository
     {
         Task<Profile?> GetByUsername(string username);
         Task<bool> ExistById(Guid id);
+        Task<List<Profile>> GetRange(List<Guid> profileIds);
     }
 }

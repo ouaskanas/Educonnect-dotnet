@@ -222,7 +222,7 @@ public class PostService : IPostService
             throw new UnauthorizedException("You dont have access to this ressource");
         }
 
-        post.DeletePost(profileId);
+        post.Delete(profileId);
         await _postRepository.Update(post);
         return true;
     }
@@ -236,7 +236,7 @@ public class PostService : IPostService
             throw new UnauthorizedException("You dont have access to this ressource");
         }
 
-        post.UpdatePost(updatePostRequest.PostTitle, updatePostRequest.PostBody, profileId);
+        post.Update(updatePostRequest.PostTitle, updatePostRequest.PostBody, profileId);
         await _postRepository.Update(post);
 
         return new UpdatePostResponse
@@ -244,7 +244,7 @@ public class PostService : IPostService
             Id = postId,
             PostTitle = post.Title,
             PostBody = post.Body,
-            UpdatedAt = post.UpdatedAt,
+            UpdatedAt = post.LastModifiedAt,
             UpdatedBy = post.Author.Username,
             GroupId = post.GroupId,
             AuthorId = profileId,

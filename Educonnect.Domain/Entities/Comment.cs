@@ -1,5 +1,5 @@
-﻿using Educonnect.Domain.Enums;
-using Educonnect.Domain.Interfaces;
+﻿using Educonnect.Domain.Common;
+using Educonnect.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Educonnect.Domain.Entities
 {
-    public class Comment : IDeletable
+    public class Comment : Auditable
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Content { get; set; } = string.Empty;
@@ -19,28 +19,16 @@ namespace Educonnect.Domain.Entities
         public virtual Post? Post { get; set; }
         public Guid PostId { get; set; }
         public Guid? FatherCommentId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt {  get; set; }
-        public Guid? UpdateBy {  get; set; }
-        /// <summary>
-        /// Deletable Attributes 
-        /// </summary>
-        public DateTime? DeletedAt { get; set; }
-        public bool IsDeleted { get; set; }
-        public Guid? DeletedBy { get; set; }
 
-        public void UpdateComment(string Comment, Guid userId)
+        public void Update(string newContent, Guid userId)
         {
-            UpdateBy = userId;
-            UpdatedAt = DateTime.Now; 
-            Content = Comment;
+            Content = newContent;
+            Modify(userId);
         }
 
-        public void DeleteComment(Guid userId)
+        public override void Delete(Guid userId)
         {
-            DeletedAt = DateTime.Now;
-            IsDeleted = true; 
-            DeletedBy = userId;
+            base.Delete(userId);
         }
 
         public Reaction LikeComment(Profile profile)

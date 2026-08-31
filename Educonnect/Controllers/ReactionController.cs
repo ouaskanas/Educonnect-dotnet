@@ -4,7 +4,6 @@ using Educonnect.Application.Services.IService;
 using Educonnect.Common.Pagination.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-// to be tested
 namespace Educonnect.Controllers
 {
     [Authorize(Roles = "User")]
