@@ -124,7 +124,7 @@ namespace Educonnect.Application.Services.Service
         {
             var profil = await _profileRepository.GetById(profilId) ?? throw new EntityNotFoundException("Profil not found");
             var comment = await _commentRepository.GetById(commentId) ?? throw new EntityNotFoundException("Comment not found");
-            comment.UpdateComment(Content, profil.UserId);
+            comment.Update(Content, profil.UserId);
             await _commentRepository.Update(comment);
             return new UpdateCommentResponse
             {
@@ -140,7 +140,7 @@ namespace Educonnect.Application.Services.Service
         {
             var profil = await _profileRepository.GetById(profilId) ?? throw new EntityNotFoundException("Profil not found");
             var comment = await _commentRepository.GetById(commentId) ?? throw new EntityNotFoundException("Comment not found");
-            comment.DeleteComment(profil.UserId);
+            comment.Delete(profil.UserId);
             await _commentRepository.Update(comment);
             return true;
         }

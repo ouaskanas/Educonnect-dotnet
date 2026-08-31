@@ -1,9 +1,8 @@
 using Educonnect.Domain.Enums;
-using Educonnect.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Educonnect.Domain.Entities;
-public class User : IdentityUser<Guid>, IDeletable
+public class User : IdentityUser<Guid>
 {
     public string Name { get; set; } = string.Empty;
     public Role Role { get; set; } = Role.None;
@@ -13,4 +12,11 @@ public class User : IdentityUser<Guid>, IDeletable
     public DateTime? DeletedAt { get; set; }
     public bool IsDeleted { get; set; }
     public Guid? DeletedBy { get; set; }
+
+    public void Delete(Guid userId)
+    {
+        DeletedAt = DateTime.Now;
+        IsDeleted = true;
+        DeletedBy = userId;
+    }
 }

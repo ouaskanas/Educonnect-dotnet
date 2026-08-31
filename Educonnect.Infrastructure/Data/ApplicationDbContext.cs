@@ -121,17 +121,17 @@ public class ApplicationDbContext : IdentityUserContext<User, Guid>
         m.Entity<Group>(e =>
         {
             e.HasKey(g => g.Id);
-            e.HasIndex(g => g.GroupId).IsUnique();
+            e.HasIndex(g => g.AdminId).IsUnique();
             e.HasQueryFilter(g => !g.IsDeleted);
 
-            e.Ignore(g => g.PostId);
+            e.Ignore(g => g.PostIds);
 
             e.HasOne(g => g.Admin)
              .WithMany()
              .HasForeignKey(g => g.AdminId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            e.HasMany(g => g.Memebres)
+            e.HasMany(g => g.Membres)
              .WithMany(p => p.Groups)
              .UsingEntity("GroupMembers");
 
